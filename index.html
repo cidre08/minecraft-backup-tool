@@ -98,7 +98,7 @@
     <!-- 公式版用 -->
     <div id="officialField" class="form-group">
         <label for="worldName">② ワールドのフォルダ名：</label>
-        <input type="text" id="worldName" value="ワールド名" oninput="generateScript()">
+        <input type="text" id="worldName" placeholder="ワールド名を入力" oninput="generateScript()">
         <small>※ 公式版の saves 内にあるワールド名を入力</small>
     </div>
 
@@ -106,13 +106,13 @@
     <div id="curseforgeFields" class="form-group" style="display: none;">
         <div style="margin-bottom: 10px;">
             <label for="instanceName">② CurseForgeのインスタンス名（英語）：</label>
-            <input type="text" id="instanceName" value="インスタンス名" oninput="generateScript()">
-            <small>※ 例: CreateMod など</small>
+            <input type="text" id="instanceName" placeholder="例: CreateMod" oninput="generateScript()">
+            <small>※ CurseForgeアプリのアイコン下に表示されているプロファイル名</small>
         </div>
         <div>
             <label for="worldNameCF">③ ワールドのフォルダ名：</label>
-            <input type="text" id="worldNameCF" value="ワールド名" oninput="generateScript()">
-            <small>※ saves 内にあるワールド名（例: onono）を入力</small>
+            <input type="text" id="worldNameCF" placeholder="ワールド名を入力" oninput="generateScript()">
+            <small>※ saves 内にあるワールド名を入力</small>
         </div>
     </div>
 
@@ -163,26 +163,23 @@
             if (isCurseForge) {
                 cfFields.style.display = 'block';
                 officialField.style.display = 'none';
-                document.getElementById('instanceName').value = 'インスタンス名';
-                document.getElementById('worldNameCF').value = 'ワールド名';
             } else {
                 cfFields.style.display = 'none';
                 officialField.style.display = 'block';
-                document.getElementById('worldName').value = 'ワールド名';
             }
             generateScript();
         }
 
         function generateScript() {
             const isCurseForge = document.querySelector('input[name="launcher"]:checked').value === 'curseforge';
-            let source, displayPath;
+            let source;
 
             if (isCurseForge) {
-                let instanceName = document.getElementById('instanceName').value.trim();
-                let worldNameCF = document.getElementById('worldNameCF').value.trim();
+                let instanceName = document.getElementById('instanceName').value.trim() || 'InstanceName';
+                let worldNameCF = document.getElementById('worldNameCF').value.trim() || 'WorldName';
                 source = `%USERPROFILE%\\Documents\\CurseForge\\Minecraft\\Instances\\${instanceName}\\saves\\${worldNameCF}`;
             } else {
-                let worldName = document.getElementById('worldName').value.trim();
+                let worldName = document.getElementById('worldName').value.trim() || 'WorldName';
                 source = `%appdata%\\.minecraft\\saves\\${worldName}`;
             }
 
