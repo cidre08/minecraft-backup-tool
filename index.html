@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>マイクラ自動バックアップ作成ツール</title>
-
-  <link rel="icon" href="icon.png" type="image/png">
+    <link rel="icon" href="icon.png" type="image/png">
     <style>
         body { font-family: sans-serif; max-width: 650px; margin: 15px auto; padding: 15px; background: #322f2d; color: #e8e2dc; line-height: 1.6; }
         
@@ -88,14 +87,15 @@
     </div>
 
     <div class="note-box">
-        💡 <strong>セーブフォルダの場所：</strong><br>
-        <button type="button" class="btn-orange" onclick="copySavePath()">📋 パスをコピー</button> を押してパスをコピーし、[Windows] + [R] の小窓に貼り付けて開けます。
+        💡 <strong>セーブフォルダの指定方法：</strong><br>
+        * <strong>通常版（公式ランチャー）の場合：</strong> ワールド名（例: <code>onono</code>）だけでもOKです。<br>
+        * <strong>CurseForge版の場合：</strong> CurseForgeの「3点リーダー(...)」→「フォルダを開く」から <code>saves\onono</code> フォルダを開き、アドレスバーのフルパスをそのまま①に貼り付けてください！
     </div>
 
     <div class="form-group">
-        <label for="worldName">① ワールドのフォルダ名：</label>
-        <input type="text" id="worldName" value="New World" oninput="generateScript()">
-        <small>※ 開いたセーブフォルダ内にある、対象の<span class="highlight-text">ワールド名</span>を入力</small>
+        <label for="worldName">① ワールドのフォルダ名 または フルパス：</label>
+        <input type="text" id="worldName" value="onono" oninput="generateScript()">
+        <small>※ フォルダ名（例: <code>onono</code>）またはセーブフォルダのフルパスを入力</small>
         <div class="preview-box">パス確認: <span id="pathPreview" style="color: #9cb8d9; font-weight: bold;"></span></div>
     </div>
 
@@ -134,15 +134,16 @@
             }
         }
 
-        function copySavePath() {
-            navigator.clipboard.writeText("%appdata%\\.minecraft\\saves").then(() => {
-                alert('パスをコピーしました！');
-            });
-        }
-
         function generateScript() {
-            let worldName = document.getElementById('worldName').value.trim();
-            let source = `%appdata%\\.minecraft\\saves\\${worldName}`;
+            let inputVal = document.getElementById('worldName').value.trim();
+            let source;
+
+            // フルパス（ドライブ名や環境変数、円マークを含む場合）はそのまま使用、そうでなければデフォルトのsavesパスに結合
+            if (inputVal.includes('\\') || inputVal.includes(':') || inputVal.startsWith('%')) {
+                source = inputVal;
+            } else {
+                source = `%appdata%\\.minecraft\\saves\\${inputVal}`;
+            }
 
             let dest = document.getElementById('dest').value.trim();
             const interval = document.getElementById('interval').value;
@@ -248,7 +249,6 @@ pause`;
 
         function downloadFile() {
             generateScript();
-            // ★【修正点】Windows用に改行コードをCRLFに置換してからBlobを作成
             let script = document.getElementById('output').value;
             script = script.replace(/\n/g, '\r\n');
 
