@@ -241,92 +241,70 @@
 chcp 65001 >nul
 color 07
 setlocal enabledelayedexpansion
-title マイクラ自動バックアップ
+title Minecraft Backup
 
-:: ==========================================
-:: 設定エリア
-:: ==========================================
 set "SOURCE=${source}"
 set "DEST=${dest}"
 set "INTERVAL=${interval}"
 set "WORLD_FOLDER=${worldFolderName}"
-:: ==========================================
 
-echo [INFO] マインクラフト連動型バックアップをスタンバイしました。
-echo 【設定】 %INTERVAL% 分ごとにバックアップ（最新3世代保持）
-echo 監視先: %SOURCE%
-echo.
-echo [INFO] マインクラフトの起動を待っています...
-echo （マイクラを起動すると、自動的にバックアップが開始されます）
+echo [INFO] Waiting for Minecraft...
 echo.
 
-:: マイクラが起動するまで待機するループ
-:WAIT_FOR_START
+:WAIT_LOOP
 tasklist /fi "imagename eq javaw.exe" 2>nul | find /i "javaw.exe" >nul
-if not errorlevel 1 goto START_BACKUP
+if not errorlevel 1 goto START_RUN
 timeout /t 2 /nobreak >nul
-goto WAIT_FOR_START
+goto WAIT_LOOP
 
-:START_BACKUP
+:START_RUN
 echo.
-echo [INFO] マインクラフトの起動を検出しました！
-echo 定期バックアップを開始します（ゲーム終了時に自動で閉じます）。
+echo [INFO] Minecraft detected! Starting backup...
 timeout /t 2 /nobreak >nul
 
-:LOOP
-:: マイクラ（javaw.exe）が起動しているかチェック
+:MAIN_LOOP
 tasklist /fi "imagename eq javaw.exe" 2>nul | find /i "javaw.exe" >nul
 if errorlevel 1 (
     echo.
-    echo [INFO] マインクラフトの終了を検出しました。
-    echo 自動的にバックアップツールを終了します。
+    echo [INFO] Minecraft closed. Exiting...
     timeout /t 3 /nobreak >nul
     exit
 )
 
 cls
-echo [%DATE% %TIME%] 定期バックアップを実行中...
-echo 【設定】 %INTERVAL% 分おき ｜ マイクラ起動中 (終了すると自動で閉じます)
-echo.
+echo [%DATE% %TIME%] Running backup...
+echo Interval: %INTERVAL% min
 
 if not exist "%DEST%" mkdir "%DEST%"
 
-:: タイムスタンプの作成
 for /f "usebackq" %%i in (\`powershell -Command "Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'"\`) do set "TIMESTAMP=%%i"
 
-:: バックアップ先フォルダ（日時\ワールド名）の作成とコピー実行
 set "TARGET_DIR=%DEST%\\%TIMESTAMP%\\%WORLD_FOLDER%"
 mkdir "%TARGET_DIR%" >nul 2>&1
 
-echo [%DATE% %TIME%] バックアップを作成しています...
 powershell -Command "Copy-Item -Path '%SOURCE%\\*' -Destination '%TARGET_DIR%' -Recurse -Force -ErrorAction SilentlyContinue"
 
-:: 古いバックアップの整理（最新3つだけ残す）
 powershell -Command "$backups = Get-ChildItem -Path '%DEST%' -Directory | Sort-Object CreationTime; if ($backups.Count -gt 3) { $backups[0..($backups.Count - 4)] | Remove-Item -Recurse -Force }"
 
-echo [%DATE% %TIME%] バックアップが完了しました。最新の3世代までが保持されます。
+echo Backup completed.
 
-:: 待機処理（途中でマイクラが終了していないかも細かくチェック）
-echo 次回の実行まで待機中... (%INTERVAL% 分)
 set /a "SEC=%INTERVAL% * 60"
 set /a "CHECK_COUNT=0"
 
-:WAIT_LOOP
-if !CHECK_COUNT! geq !SEC! goto LOOP
+:CHECK_WAIT
+if !CHECK_COUNT! geq !SEC! goto MAIN_LOOP
 timeout /t 1 /nobreak >nul
 
-:: 1秒ごとにマイクラが起動しているか確認
 tasklist /fi "imagename eq javaw.exe" 2>nul | find /i "javaw.exe" >nul
 if errorlevel 1 (
     echo.
-    echo [INFO] マインクラフトの終了を検出しました。
-    echo 自動的にバックアップツールを終了します。
+    echo [INFO] Minecraft closed. Exiting...
     timeout /t 2 /nobreak >nul
     exit
 )
 
 set /a "CHECK_COUNT+=1"
-goto WAIT_LOOP`;
+goto CHECK_WAIT`;
 
             document.getElementById('output').value = script;
         }
