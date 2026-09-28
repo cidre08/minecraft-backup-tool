@@ -248,8 +248,11 @@ set "DEST=${dest}"
 set "INTERVAL=${interval}"
 set "WORLD_FOLDER=${worldFolderName}"
 
-echo [INFO] Waiting for Minecraft...
+echo [INFO] Standby for Minecraft...
+echo [INFO] Target Path: %SOURCE%
+echo [INFO] Interval: %INTERVAL% minutes
 echo.
+echo [INFO] Waiting for Minecraft to start...
 
 :WAIT_LOOP
 tasklist /fi "imagename eq javaw.exe" 2>nul | find /i "javaw.exe" >nul
@@ -273,7 +276,9 @@ if errorlevel 1 (
 
 cls
 echo [%DATE% %TIME%] Running backup...
-echo Interval: %INTERVAL% min
+echo [INFO] Target Path: %SOURCE%
+echo [INFO] Interval: %INTERVAL% minutes (Auto-close when Minecraft exits)
+echo.
 
 if not exist "%DEST%" mkdir "%DEST%"
 
@@ -286,7 +291,7 @@ powershell -Command "Copy-Item -Path '%SOURCE%\\*' -Destination '%TARGET_DIR%' -
 
 powershell -Command "$backups = Get-ChildItem -Path '%DEST%' -Directory | Sort-Object CreationTime; if ($backups.Count -gt 3) { $backups[0..($backups.Count - 4)] | Remove-Item -Recurse -Force }"
 
-echo Backup completed.
+echo Backup completed. (Keeping latest 3 generations)
 
 set /a "SEC=%INTERVAL% * 60"
 set /a "CHECK_COUNT=0"
