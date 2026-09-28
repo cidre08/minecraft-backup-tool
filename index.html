@@ -246,7 +246,10 @@ pause`;
 
         function downloadFile() {
             generateScript();
-            const script = document.getElementById('output').value;
+            // ★【修正点】Windows用に改行コードをCRLFに置換してからBlobを作成
+            let script = document.getElementById('output').value;
+            script = script.replace(/\n/g, '\r\n');
+
             const blob = new Blob([script], { type: 'text/plain;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
