@@ -55,6 +55,11 @@
         .modal-body ul { padding-left: 20px; margin: 0 0 10px 0; color: #d1c9bd; font-size: 0.85rem; line-height: 1.5; }
         .modal-body li { margin-bottom: 6px; }
         .step-box { background: #3b3735; padding: 8px 10px; border-radius: 4px; margin-top: 4px; border-left: 3px solid #b87a56; }
+        
+        /* 折りたたみ用スタイル */
+        details { background: #3b3735; padding: 8px 10px; border-radius: 4px; margin-top: 6px; border-left: 3px solid #6a7c91; }
+        summary { cursor: pointer; color: #f0eae1; font-weight: bold; font-size: 0.88rem; }
+        details ul { margin-top: 6px; }
     </style>
 </head>
 <body>
@@ -77,24 +82,35 @@
                 
                 <h4>📌 1. 使い方</h4>
                 <ul>
-                    <li><strong>基本の手順：</strong> このツールで作成したバッチファイルをデスクトップ等に配置し、マイクラを遊ぶ前にダブルクリックで起動します。<strong>ゲームを遊んでいる間は、黒い画面を閉じずにそのまま開いておく必要があります</strong>。</li>
-                    <li><strong>セキュリティ警告が出たら：</strong> ファイルを右クリックして<strong>「プロパティ」</strong>を開き、一番下にあるセキュリティの<strong>「許可する（またはブロックの解除）」</strong>にチェックを入れて<strong>「OK」</strong>を押すとスムーズ,に開けるようになります。</li>
+                    <li><strong>基本の手順：</strong> <strong>ゲームを始める前（マイクラを起動する直前）に</strong>、このツールで作成したバッチファイルをダブルクリックで起動します。<strong>ゲームを遊んでいる間は、黒い画面を閉じずにそのまま開いておく必要があります</strong>。</li>
+                    <li><strong>セキュリティ警告が出たら：</strong> ファイルを右クリックして<strong>「プロパティ」</strong>を開き、一番下にあるセキュリティの<strong>「許可する（またはブロックの解除）」</strong>にチェックを入れて<strong>「OK」</strong>を押すとスムーズに開けるようになります。</li>
                 </ul>
 
                 <h4>⚙️ 2. ツールの仕組み</h4>
                 <ul>
-                    <li><strong>バックアップの動作：</strong> セーブデータの更新を検知し、自動で別フォルダにコピーを作成します（古いものは自動で整理され、最新3世代のみ保持されます）。</li>
-                    <li><strong>自動終了機能：</strong> マイクラを終了して1時間以上セーブデータの更新がない場合、自動で監視を停止しポップアップでお知らせします（無駄な常駐を防ぎます）。</li>
+                    <li><strong>バックアップの動作：</strong> 指定した時間おきに自動で別フォルダにコピーを作成します（古いものは自動で整理され、常に最新3世代のみ保持されます）。</li>
                 </ul>
 
                 <h4>🛡️ 3. 安全性とPC・プログラムへの影響</h4>
                 <ul>
-                    <li><strong>PCへの負荷：</strong> 指定した時間おきにファイルの更新日時を確認してコピーするだけの軽量な処理なため、CPUやメモリを圧迫せず、パソコンやゲームの動作に悪影響は与えません。</li>
+                    <li><strong>PCへの負荷：</strong> 指定した時間おきにファイルをコピーするだけの軽量な処理なため、CPUやメモリを圧迫せず、パソコンやゲームの動作に悪影響は与えません。</li>
                     <li><strong>プログラムへの影響：</strong> セーブデータフォルダを「読み取ってコピー」するだけであり、ゲーム本体のプログラムやMODの挙動を書き換えることは一切ないため、悪影響はありません。</li>
                     <li><strong>プライバシー・通信：</strong> 外部へのデータ送信やインターネット通信は一切行わず、お使いのパソコン内（ローカル環境）だけで完結するため安心です。</li>
                 </ul>
 
-                <h4>⚠️ 4. 免責事項</h4>
+                <h4>🛟 4. 万が一クラッシュしたときの復旧手順</h4>
+                <details>
+                    <summary>クリックして復旧手順を表示する</summary>
+                    <ul>
+                        <li><strong>1. マイクラを完全に終了する：</strong> ゲームが起動したままだとファイルを上書きできないため、必ずマイクラを閉じます。</li>
+                        <li><strong>2. 壊れたワールドを移動：</strong> 壊れてしまった元のワールドフォルダを開き、中のワールドデータ（例: <code>onono</code> フォルダ）を削除するか、念のため別の場所に退避させます。</li>
+                        <li><strong>3. バックアップから取り出す：</strong> デスクトップの保存先を開き、<strong>クラッシュする直前の時間</strong>が名前に付いているフォルダを開きます。その中にある <strong>ワールドフォルダ（例: <code>onono</code>）</strong>を丸ごとコピーします。</li>
+                        <li><strong>4. 元の場所に戻す：</strong> 元の saves フォルダの中に、コピーしたワールドフォルダを貼り付けます。</li>
+                        <li><strong>5. ゲームを起動する：</strong> マイクラを起動してワールドを開けば、バックアップ時点の状態に復活します！</li>
+                    </ul>
+                </details>
+
+                <h4>⚠️ 5. 免責事項</h4>
                 <ul>
                     <li>本ツールは元データを上書き・改変しない安全設計ですが、万が一のデータ破損や消失等のトラブルが発生した場合に備え、ご自身の責任においてご利用ください。</li>
                 </ul>
@@ -151,8 +167,8 @@
 
     <div class="form-group">
         <label for="interval">バックアップの間隔（分）：</label>
-        <input type="number" id="interval" value="30" min="1" oninput="generateScript()">
-        <small>※ 例: 30分おきなら 30 （※更新がないまま1時間で自動終了）</small>
+        <input type="number" id="interval" value="3" min="1" oninput="generateScript()">
+        <small>※ 例: 3分おきなら 3</small>
     </div>
 
     <div class="preview-box" style="margin-bottom: 15px;">
@@ -234,71 +250,38 @@ set "DEST=${dest}"
 set "INTERVAL=${interval}"
 :: ==========================================
 
-echo [INFO] マインクラフト自動バックアップを開始します（元データは保護されます）。
-echo 設定間隔: %INTERVAL% 分ごとに最新3つを保持します。
-echo ※ ワールドの更新がなくなってから1時間（60分）経つと、自動で終了します。
-echo このウィンドウを閉じずにそのままにしておいてください。
+echo [INFO] マインクラフト定期バックアップを開始します（元データは保護されます）。
+echo 設定間隔: %INTERVAL% 分ごとにバックアップを作成し、最新3つを保持します。
+echo 監視先: %SOURCE%
+echo ※ ゲームを始める前（起動直前）に起動し、遊んでいる間はこの黒い画面を閉じずにそのままにしておいてください。
 echo.
-
-set "LAST_MTIME="
-set "NO_CHANGE_MINUTES=0"
 
 :LOOP
 cls
-echo [%DATE% %TIME%] 監視中... (変更なし: !NO_CHANGE_MINUTES!分 / 60分で自動終了)
-
-:: 現在のワールドの最新更新日時を取得
-for /f "usebackq" %%i in (\`powershell -Command "$p='%SOURCE%'; if(Test-Path $p){ (Get-ChildItem -Path$p -Recurse | Sort-Object LastWriteTime -Descending | Select-Object -First 1).LastWriteTime.ToString('yyyyMMddHHmmss') } else { '0' }" \`) do set "CURRENT_MTIME=%%i"
-
-if "%LAST_MTIME%"=="" (
-    set "LAST_MTIME=%CURRENT_MTIME%"
-    goto DO_BACKUP
-)
-
-if "%CURRENT_MTIME%"=="%LAST_MTIME%" (
-    set /a "NO_CHANGE_MINUTES+=INTERVAL"
-    
-    if !NO_CHANGE_MINUTES! GEQ 60 (
-        echo.
-        echo [%DATE% %TIME%] [INFO] 1時間以上ワールドの更新（セーブ）がないため、自動で監視を終了します。
-        goto END
-    )
-    goto WAIT
-) else (
-    set "LAST_MTIME=%CURRENT_MTIME%"
-    set "NO_CHANGE_MINUTES=0"
-    goto DO_BACKUP
-)
-
-:DO_BACKUP
-echo [%DATE% %TIME%] ワールドの更新を検知しました。バックアップを実行中...
+echo [%DATE% %TIME%] 定期バックアップを実行中...
+echo 監視先: %SOURCE%
+echo.
 
 if not exist "%DEST%" mkdir "%DEST%"
 
+:: タイムスタンプの作成
 for /f "usebackq" %%i in (\`powershell -Command "Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'"\`) do set "TIMESTAMP=%%i"
 
-mkdir "%DEST%\\%TIMESTAMP%"
-powershell -Command "Copy-Item -Path '%SOURCE%\\*' -Destination '%DEST%\\%TIMESTAMP%' -Recurse -Force"
+:: バックアップのコピー実行
+echo [%DATE% %TIME%] バックアップを作成しています...
+powershell -Command "Copy-Item -Path '%SOURCE%' -Destination '%DEST%\\%TIMESTAMP%' -Recurse -Force -ErrorAction SilentlyContinue"
 
+:: 古いバックアップの整理（最新3つだけ残す）
 powershell -Command "$backups = Get-ChildItem -Path '%DEST%' -Directory | Sort-Object CreationTime; if ($backups.Count -gt 3) { $backups[0..($backups.Count - 4)] | Remove-Item -Recurse -Force }"
 
-echo [%DATE% %TIME%] バックアップが完了しました。
+echo [%DATE% %TIME%] バックアップが完了しました。最新の3世代までが保持されます。
 
-:WAIT
-echo 次回の実行まで待機中... (設定間隔: %INTERVAL% 分)
-
+:: 待機処理
+echo 次回の実行まで待機中... (%INTERVAL% 分)
 set /a "SEC=%INTERVAL% * 60"
 timeout /t %SEC% /nobreak >nul
 
-goto LOOP
-
-:END
-echo.
-echo ----------------------------------------
-echo 自動バックアップツールを終了しました。
-echo ----------------------------------------
-powershell -Command "Add-Type -AssemblyName PresentationFramework; [System.Windows.MessageBox]::Show('1時間以上ワールドの更新がないため、自動バックアップの監視を終了しました。再開するにはバッチファイルを再度起動してください。', 'マイクラ自動バックアップ', 'OK', 'Information')"
-pause`;
+goto LOOP`;
 
             document.getElementById('output').value = script;
         }
