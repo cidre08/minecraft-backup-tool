@@ -49,8 +49,12 @@
         .modal-content { background: #272524; border: 1px solid #5c5450; border-radius: 8px; max-width: 550px; width: 100%; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; max-height: 90vh; overflow-y: auto; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5c5450; padding-bottom: 8px; margin-bottom: 12px; }
         .modal-header h3 { margin: 0; color: #f5f0eb; font-size: 1.1rem; }
-        .modal-body ul { padding-left: 20px; margin: 0; color: #d1c9bd; font-size: 0.85rem; line-height: 1.6; }
-        .modal-body li { margin-bottom: 10px; }
+        
+        /* モーダル内セクション整理用スタイル */
+        .modal-body h4 { color: #f0eae1; margin: 14px 0 6px 0; font-size: 0.92rem; border-bottom: 1px solid #5c5450; padding-bottom: 3px; }
+        .modal-body h4:first-child { margin-top: 0; }
+        .modal-body ul { padding-left: 20px; margin: 0 0 10px 0; color: #d1c9bd; font-size: 0.85rem; line-height: 1.5; }
+        .modal-body li { margin-bottom: 6px; }
     </style>
 </head>
 <body>
@@ -66,20 +70,39 @@
     <div id="helpModal" class="modal-overlay" onclick="outsideClose(event)">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>📖 使い方と安全性・免責事項</h3>
+                <h3>📖 使い方と仕組み・安全性</h3>
                 <button type="button" onclick="closeModal()" style="background: transparent; color: #b8afa6; border: none; font-size: 1.2rem; cursor: pointer; padding: 0 4px;">✕</button>
             </div>
             <div class="modal-body">
+                
+                <!-- 1. 使い方 -->
+                <h4>📌 1. 使い方</h4>
                 <ul>
-                    <li><strong>仕組み：</strong> セーブデータの更新を検知し、自動で別フォルダにコピーを作成します（古いものは自動で整理され、最新3世代のみ保持）。</li>
-                    <li><strong>PCへの負荷について：</strong> 指定した時間おきにファイルの更新日時を確認してコピーするだけの軽量な処理なため、CPUやメモリを圧迫せず、パソコンやゲームの動作に悪影響は与えません。</li>
-                    <li><strong>ゲーム（マイクラ・MOD）への影響：</strong> セーブデータフォルダを「読み取ってコピー」するだけであり、ゲーム本体のプログラムやMODの挙動を書き換えることは一切ないため、プログラムへの悪影響はありません。</li>
-                    <li><strong>コンプライアンス・プライバシー：</strong> 外部へのデータ送信やインターネット通信（外部サーバーとの通信）は一切行わず、お使いのパソコン内（ローカル環境）だけで完結するため安心です。</li>
-                    <li><strong>免責事項：</strong> 本ツールは元データを上書き・改変しない安全設計ですが、万が一のデータ破損や消失等のトラブルが発生した場合に備え、ご自身の責任においてご利用ください。</li>
-                    <li><strong>自動終了機能：</strong> マイクラを終了して1時間以上セーブデータの更新がない場合、自動で監視を停止しポップアップでお知らせします（無駄な常駐を防ぎます）。</li>
-                    <li><strong>使い方（重要）：</strong> デスクトップに配置し、マイクラを遊ぶ前にダブルクリックで起動します。<strong>ゲームを遊んでいる間は、この黒い画面を閉じずにそのまま開いておく必要があります</strong>。</li>
-                    <li><strong>セキュリティ警告が出たら：</strong> 初めて開く際に警告が出た場合は、ファイルを右クリックして<strong>「プロパティ」</strong>を開き、一番下にあるセキュリティの<strong>「許可する（またはブロックの解除）」</strong>にチェックを入れて「OK」を押すとスムーズに開けるようになります。</li>
+                    <li><strong>基本の手順：</strong> デスクトップに配置し、マイクラを遊ぶ前にダブルクリックで起動します。<strong>ゲームを遊んでいる間は、この黒い画面を閉じずにそのまま開いておく必要があります</strong>。</li>
+                    <li><strong>セキュリティ警告が出たら：</strong> ファイルを右クリックして<strong>「プロパティ」</strong>を開き、一番下にあるセキュリティの<strong>「許可する（またはブロックの解除）」</strong>にチェックを入れて「OK」を押すとスムーズに開けるようになります。</li>
                 </ul>
+
+                <!-- 2. 仕組み -->
+                <h4>⚙️ 2. ツールの仕組み</h4>
+                <ul>
+                    <li><strong>バックアップの動作：</strong> セーブデータの更新を検知し、自動で別フォルダにコピーを作成します（古いものは自動で整理され、最新3世代のみ保持されます）。</li>
+                    <li><strong>自動終了機能：</strong> マイクラを終了して1時間以上セーブデータの更新がない場合、自動で監視を停止しポップアップでお知らせします（無駄な常駐を防ぎます）。</li>
+                </ul>
+
+                <!-- 3. 安全性・負荷・コンプライアンス -->
+                <h4>🛡️ 3. 安全性とPC・プログラムへの影響</h4>
+                <ul>
+                    <li><strong>PCへの負荷：</strong> 指定した時間おきにファイルの更新日時を確認してコピーするだけの軽量な処理なため、CPUやメモリを圧迫せず、パソコンやゲームの動作に悪影響は与えません。</li>
+                    <li><strong>プログラムへの影響：</strong> セーブデータフォルダを「読み取ってコピー」するだけであり、ゲーム本体のプログラムやMODの挙動を書き換えることは一切ないため、悪影響はありません。</li>
+                    <li><strong>プライバシー・通信：</strong> 外部へのデータ送信やインターネット通信は一切行わず、お使いのパソコン内（ローカル環境）だけで完結するため安心です。</li>
+                </ul>
+
+                <!-- 4. 免責事項 -->
+                <h4>⚠️ 4. 免責事項</h4>
+                <ul>
+                    <li>本ツールは元データを上書き・改変しない安全設計ですが、万が一のデータ破損や消失等のトラブルが発生した場合に備え、ご自身の責任においてご利用ください。</li>
+                </ul>
+
             </div>
             <div style="text-align: right; margin-top: 15px;">
                 <button type="button" onclick="closeModal()" style="background: #6b8268; padding: 6px 16px; font-size: 0.85rem;">閉じる</button>
