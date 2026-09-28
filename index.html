@@ -103,9 +103,9 @@
                     <summary>クリックして復旧手順を表示する</summary>
                     <ul>
                         <li><strong>1. マイクラを完全に終了する：</strong> ゲームが起動したままだとファイルを上書きできないため、必ずマイクラを閉じます。</li>
-                        <li><strong>2. 元データを別の場所に退避させる：</strong> トラブル防止のため、壊れてしまった元のワールドフォルダは直接削除せず、安全な別の場所へフォルダごとコピー（または移動）して退避させます。</li>
-                        <li><strong>3. バックアップから取り出す：</strong> デスクトップの保存先を開き、<strong>クラッシュする直前の時間</strong>が名前に付いているフォルダを開きます。その中にある <strong>ワールドフォルダ</strong>を丸ごとコピーします。</li>
-                        <li><strong>4. 元の場所に戻す：</strong> 元の saves フォルダの中に、コピーしたワールドフォルダを貼り付けます。</li>
+                        <li><strong>2. 元データを安全な場所に退避させる：</strong> トラブル防止のため、壊れてしまった元のワールドフォルダは直接削除せず、安全な別の場所へフォルダごとコピー（または移動）して退避させます（savesの中にワールドフォルダの箱を残しておく必要があります）。</li>
+                        <li><strong>3. バックアップからワールドフォルダを取り出す：</strong> デスクトップの保存先を開き、<strong>クラッシュする直前の時間</strong>が名前に付いているフォルダを開きます。その中にある <strong>ワールド名のフォルダ</strong>を丸ごとコピーします。</li>
+                        <li><strong>4. 元の saves フォルダに戻す：</strong> コピーしたワールド名のフォルダを、元の saves フォルダの中にそのまま貼り付けます。</li>
                         <li><strong>5. ゲームを起動する：</strong> マイクラを起動してワールドを開けば、バックアップ時点の状態に復活します！</li>
                     </ul>
                 </details>
@@ -215,17 +215,17 @@
 
         function generateScript() {
             const isCurseForge = document.querySelector('input[name="launcher"]:checked').value === 'curseforge';
-            let source;
+            let source, worldFolderName;
 
             if (isCurseForge) {
                 let instPath = document.getElementById('instancePath').value.trim() || 'C:\\Path\\To\\Instance';
-                let worldNameCF = document.getElementById('worldNameCF').value.trim() || 'WorldName';
+                worldFolderName = document.getElementById('worldNameCF').value.trim() || 'WorldName';
                 
                 if (instPath.endsWith('\\')) instPath = instPath.slice(0, -1);
-                source = `${instPath}\\saves\\${worldNameCF}`;
+                source = `${instPath}\\saves\\${worldFolderName}`;
             } else {
-                let worldName = document.getElementById('worldName').value.trim() || 'WorldName';
-                source = `%appdata%\\.minecraft\\saves\\${worldName}`;
+                worldFolderName = document.getElementById('worldName').value.trim() || 'WorldName';
+                source = `%appdata%\\.minecraft\\saves\\${worldFolderName}`;
             }
 
             let dest = document.getElementById('dest').value.trim();
@@ -248,6 +248,7 @@ title マイクラ自動バックアップ
 set "SOURCE=${source}"
 set "DEST=${dest}"
 set "INTERVAL=${interval}"
+set "WORLD_FOLDER=${worldFolderName}"
 :: ==========================================
 
 echo [INFO] マインクラフト定期バックアップを開始します（元データは保護されます）。
@@ -267,9 +268,12 @@ if not exist "%DEST%" mkdir "%DEST%"
 :: タイムスタンプの作成
 for /f "usebackq" %%i in (\`powershell -Command "Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'"\`) do set "TIMESTAMP=%%i"
 
-:: バックアップのコピー実行
+:: バックアップ先フォルダ（日時\ワールド名）の作成とコピー実行
+set "TARGET_DIR=%DEST%\\%TIMESTAMP%\\%WORLD_FOLDER%"
+mkdir "%TARGET_DIR%" >nul 2>&1
+
 echo [%DATE% %TIME%] バックアップを作成しています...
-powershell -Command "Copy-Item -Path '%SOURCE%' -Destination '%DEST%\\%TIMESTAMP%' -Recurse -Force -ErrorAction SilentlyContinue"
+powershell -Command "Copy-Item -Path '%SOURCE%\\*' -Destination '%TARGET_DIR%' -Recurse -Force -ErrorAction SilentlyContinue"
 
 :: 古いバックアップの整理（最新3つだけ残す）
 powershell -Command "$backups = Get-ChildItem -Path '%DEST%' -Directory | Sort-Object CreationTime; if ($backups.Count -gt 3) { $backups[0..($backups.Count - 4)] | Remove-Item -Recurse -Force }"
