@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>マイクラ自動バックアップ作成ツール</title>
+    <style>
+        body { font-family: sans-serif; max-width: 650px; margin: 15px auto; padding: 15px; background: #322f2d; color: #e8e2dc; line-height: 1.6; }
+        
+        /* ヘッダーエリア（タイトルとボタンを左右に配置） */
+        .header-container { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #5c5450; padding-bottom: 8px; margin-bottom: 12px; }
+        h1 { font-size: 1.2rem; color: #f5f0eb; margin: 0; }
+        .help-btn { background: #5c5450; color: #f0eae1; border: none; padding: 6px 12px; font-size: 0.85rem; border-radius: 4px; cursor: pointer; font-weight: bold; white-space: nowrap; transition: background 0.2s; }
+        .help-btn:hover { background: #6e645f; }
+
+        p { margin: 8px 0; color: #d1c9bd; font-size: 0.95rem; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-weight: bold; margin-bottom: 4px; font-size: 0.95rem; color: #f0eae1; }
+        
+        input[type="text"], input[type="number"] { 
+            width: 100%; 
+            padding: 9px 12px; 
+            box-sizing: border-box; 
+            border: 2px solid #b87a56; 
+            border-radius: 6px; 
+            font-size: 0.95rem; 
+            background: #272524; 
+            color: #e8e2dc; 
+        }
+        input[type="text"]:focus, input[type="number"]:focus { 
+            outline: none; 
+            border-color: #e09f8c; 
+        }
+
+        small { color: #b8afa6; display: block; margin-top: 4px; font-size: 0.85rem; }
+        textarea { width: 100%; height: 110px; font-family: monospace; padding: 8px; box-sizing: border-box; border: 1px solid #5c5450; border-radius: 4px; background: #272524; color: #d1c9bd; font-size: 0.85rem; }
+        .btn-container { display: flex; gap: 8px; margin: 15px 0; flex-wrap: wrap; }
+        button { background: #6b8268; color: white; border: none; padding: 8px 14px; font-size: 0.9rem; border-radius: 4px; cursor: pointer; font-weight: bold; transition: background 0.2s; }
+        button:hover { background: #5a6f57; }
+        .btn-blue { background: #6a7c91; }
+        .btn-blue:hover { background: #58697d; }
+        .btn-orange { background: #a37452; color: white; border: none; padding: 3px 8px; font-size: 0.85rem; border-radius: 4px; cursor: pointer; font-weight: bold; vertical-align: middle; }
+        .btn-orange:hover { background: #8e6344; }
+        .note-box { background: #3d3936; padding: 10px 12px; border-radius: 6px; margin-bottom: 14px; font-size: 0.9rem; border-left: 4px solid #a37452; color: #e8e2dc; }
+        .highlight-text { color: #e09f8c; font-weight: bold; }
+        .preview-box { background: #272524; padding: 6px 10px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; color: #d1c9bd; margin-top: 6px; border: 1px dashed #5c5450; word-break: break-all; }
+        
+        /* モーダル用スタイル */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 100; justify-content: center; align-items: center; padding: 15px; box-sizing: border-box; }
+        .modal-content { background: #272524; border: 1px solid #5c5450; border-radius: 8px; max-width: 500px; width: 100%; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5c5450; padding-bottom: 8px; margin-bottom: 12px; }
+        .modal-header h3 { margin: 0; color: #f5f0eb; font-size: 1.1rem; }
+        .modal-body ul { padding-left: 20px; margin: 0; color: #d1c9bd; font-size: 0.88rem; line-height: 1.6; }
+        .modal-body li { margin-bottom: 8px; }
+        code { background: #3d3936; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #e8e2dc; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+
+    <!-- ヘルプボタン付きヘッダー -->
+    <div class="header-container">
+        <h1>マイクラ自動バックアップ作成ツール</h1>
+        <button type="button" class="help-btn" onclick="openModal()">📖 使い方と仕組み</button>
+    </div>
+    
+    <p>最新3世代だけを自動で残す、安全な専用バックアップファイルを作ります。</p>
+
+    <!-- モーダルウィンドウ（ポップアップ） -->
+    <div id="helpModal" class="modal-overlay" onclick="outsideClose(event)">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📖 使い方と仕組み</h3>
+                <button type="button" onclick="closeModal()" style="background: transparent; color: #b8afa6; border: none; font-size: 1.2rem; cursor: pointer; padding: 0 4px;">✕</button>
+            </div>
+            <div class="modal-body">
+                <ul>
+                    <li><strong>仕組み：</strong> セーブデータの更新を監視し、自動でコピーを作成します（古いものは勝手に整理され最新3つだけ保存）。</li>
+                    <li><strong>自動終了：</strong> マイクラを終了して1時間経つと、自動で停止しポップアップでお知らせします（PCの負担になりません）。</li>
+                    <li><strong>使い方：</strong> 下のボタンでファイルを保存（通常は<strong>「ダウンロード」フォルダ</strong>に入ります）。ファイルをデスクトップに移動させ、マイクラを遊ぶ前にダブルクリックして起動！</li>
+                    <li><strong>削除方法とPCへの影響：</strong> 専用のソフトや常駐アプリではなく、ウィンドウを閉じれば完全に停止します。使わなくなったときは、<strong>作ったバッチファイル</strong>と<strong>バックアップフォルダ</strong>をそのままゴミ箱に捨てるだけで、PCにゴミを残さず綺麗に削除できます（PCへの悪影響はありません）。</li>
+                </ul>
+            </div>
+            <div style="text-align: right; margin-top: 15px;">
+                <button type="button" onclick="closeModal()" style="background: #6b8268; padding: 6px 16px; font-size: 0.85rem;">閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="note-box">
+        💡 <strong>セーブフォルダの場所：</strong><br>
+        <button type="button" class="btn-orange" onclick="copySavePath()">📋 パスをコピー</button> を押してパスをコピーし、[Windows] + [R] の小窓に貼り付けて開けます。
+    </div>
+
+    <div class="form-group">
+        <label for="worldName">① ワールドのフォルダ名：</label>
+        <input type="text" id="worldName" value="New World" oninput="generateScript()">
+        <small>※ 開いたセーブフォルダ内にある、対象の<span class="highlight-text">ワールド名</span>を入力</small>
+        <div class="preview-box">パス確認: <span id="pathPreview" style="color: #9cb8d9; font-weight: bold;"></span></div>
+    </div>
+
+    <div class="form-group">
+        <label for="dest">② 保存先のフォルダ場所：</label>
+        <input type="text" id="dest" value="%USERPROFILE%\Desktop\MinecraftBackup" oninput="generateScript()">
+        <small>※ デスクトップに専用フォルダが自動作成されます</small>
+    </div>
+
+    <div class="form-group">
+        <label for="interval">③ バックアップの間隔（分）：</label>
+        <input type="number" id="interval" value="30" min="1" oninput="generateScript()">
+        <small>※ 例: 30分おきなら 30 （※更新がないまま1時間で自動終了）</small>
+    </div>
+
+    <div class="btn-container">
+        <button class="btn-blue" onclick="downloadFile()" style="flex: 1;">💾 batファイルとしてダウンロード</button>
+        <button onclick="copyCode()" style="flex: 1;">📋 コードをコピー</button>
+    </div>
+
+    <div class="form-group" style="margin-top: 15px;">
+        <label for="output">生成されたコード内容（確認用）：</label>
+        <textarea id="output" readonly></textarea>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('helpModal').style.display = 'flex';
+        }
+        function closeModal() {
+            document.getElementById('helpModal').style.display = 'none';
+        }
+        function outsideClose(event) {
+            if (event.target === document.getElementById('helpModal')) {
+                closeModal();
+            }
+        }
+
+        function copySavePath() {
+            navigator.clipboard.writeText("%appdata%\\.minecraft\\saves").then(() => {
+                alert('パスをコピーしました！');
+            });
+        }
+
+        function generateScript() {
+            let worldName = document.getElementById('worldName').value.trim();
+            let source = `%appdata%\\.minecraft\\saves\\${worldName}`;
+
+            let dest = document.getElementById('dest').value.trim();
+            const interval = document.getElementById('interval').value;
+
+            if (source.endsWith('\\')) source = source.slice(0, -1);
+            if (dest.endsWith('\\')) dest = dest.slice(0, -1);
+
+            document.getElementById('pathPreview').textContent = source;
+
+            const script = `@echo off
+chcp 65001 >nul
+color 07
+setlocal enabledelayedexpansion
+title マイクラ自動バックアップ
+
+:: ==========================================
+:: 設定エリア
+:: ==========================================
+set "SOURCE=${source}"
+set "DEST=${dest}"
+set "INTERVAL=${interval}"
+:: ==========================================
+
+echo [INFO] マインクラフト自動バックアップを開始します（元データは保護されます）。
+echo 設定間隔: %INTERVAL% 分ごとに最新3つを保持します。
+echo ※ ワールドの更新がなくなってから1時間（60分）経つと、自動で終了します。
+echo このウィンドウを閉じずにそのままにしておいてください。
+echo.
+
+set "LAST_MTIME="
+set "NO_CHANGE_MINUTES=0"
+
+:LOOP
+cls
+echo [%DATE% %TIME%] 監視中... (変更なし: !NO_CHANGE_MINUTES!分 / 60分で自動終了)
+
+:: 現在のワールドの最新更新日時を取得
+for /f "usebackq" %%i in (\`powershell -Command "$p='%SOURCE%'; if(Test-Path $p){ (Get-ChildItem -Path$p -Recurse | Sort-Object LastWriteTime -Descending | Select-Object -First 1).LastWriteTime.ToString('yyyyMMddHHmmss') } else { '0' }" \`) do set "CURRENT_MTIME=%%i"
+
+if "%LAST_MTIME%"=="" (
+    set "LAST_MTIME=%CURRENT_MTIME%"
+    goto DO_BACKUP
+)
+
+if "%CURRENT_MTIME%"=="%LAST_MTIME%" (
+    set /a "NO_CHANGE_MINUTES+=INTERVAL"
+    
+    if !NO_CHANGE_MINUTES! GEQ 60 (
+        echo.
+        echo [%DATE% %TIME%] [INFO] 1時間以上ワールドの更新（セーブ）がないため、自動で監視を終了します。
+        goto END
+    )
+    goto WAIT
+) else (
+    set "LAST_MTIME=%CURRENT_MTIME%"
+    set "NO_CHANGE_MINUTES=0"
+    goto DO_BACKUP
+)
+
+:DO_BACKUP
+echo [%DATE% %TIME%] ワールドの更新を検知しました。バックアップを実行中...
+
+if not exist "%DEST%" mkdir "%DEST%"
+
+for /f "usebackq" %%i in (\`powershell -Command "Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'"\`) do set "TIMESTAMP=%%i"
+
+mkdir "%DEST%\\%TIMESTAMP%"
+xcopy "%SOURCE%" "%DEST%\\%TIMESTAMP%\\" /E /I /H /Y
+
+powershell -Command "$backups = Get-ChildItem -Path '%DEST%' -Directory | Sort-Object CreationTime; if ($backups.Count -gt 3) { $backups[0..($backups.Count - 4)] | Remove-Item -Recurse -Force }"
+
+echo [%DATE% %TIME%] バックアップが完了しました。
+
+:WAIT
+echo 次回の実行まで待機中... (設定間隔: %INTERVAL% 分)
+
+set /a "SEC=%INTERVAL% * 60"
+timeout /t %SEC% /nobreak >nul
+
+goto LOOP
+
+:END
+echo.
+echo ----------------------------------------
+echo 自動バックアップツールを終了しました。
+echo ----------------------------------------
+powershell -Command "Add-Type -AssemblyName PresentationFramework; [System.Windows.MessageBox]::Show('1時間以上ワールドの更新がないため、自動バックアップの監視を終了しました。再開するにはバッチファイルを再度起動してください。', 'マイクラ自動バックアップ', 'OK', 'Information')"
+pause`;
+
+            document.getElementById('output').value = script;
+        }
+
+        function copyCode() {
+            const output = document.getElementById('output');
+            navigator.clipboard.writeText(output.value).then(() => {
+                alert('コードをコピーしました！');
+            }).catch(() => {
+                output.select();
+                document.execCommand('copy');
+                alert('コードをコピーしました！');
+            });
+        }
+
+        function downloadFile() {
+            generateScript();
+            const script = document.getElementById('output').value;
+            const blob = new Blob([script], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'backup.bat';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        window.onload = function() {
+            generateScript();
+        };
+    </script>
+</body>
+</html>
