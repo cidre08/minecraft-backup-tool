@@ -7,7 +7,7 @@
     <style>
         body { font-family: sans-serif; max-width: 650px; margin: 15px auto; padding: 15px; background: #322f2d; color: #e8e2dc; line-height: 1.6; }
         
-        /* ヘッダーエリア（タイトルとボタンを左右に配置） */
+        /* ヘッダーエリア */
         .header-container { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #5c5450; padding-bottom: 8px; margin-bottom: 12px; }
         h1 { font-size: 1.2rem; color: #f5f0eb; margin: 0; }
         .help-btn { background: #5c5450; color: #f0eae1; border: none; padding: 6px 12px; font-size: 0.85rem; border-radius: 4px; cursor: pointer; font-weight: bold; white-space: nowrap; transition: background 0.2s; }
@@ -39,8 +39,9 @@
         button:hover { background: #5a6f57; }
         .btn-blue { background: #6a7c91; }
         .btn-blue:hover { background: #58697d; }
-        .btn-orange { background: #a37452; color: white; border: none; padding: 3px 8px; font-size: 0.85rem; border-radius: 4px; cursor: pointer; font-weight: bold; vertical-align: middle; }
-        .btn-orange:hover { background: #8e6344; }
+        .radio-group { display: flex; gap: 20px; margin-top: 6px; margin-bottom: 12px; }
+        .radio-label { font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #f0eae1; }
+        
         .note-box { background: #3d3936; padding: 10px 12px; border-radius: 6px; margin-bottom: 14px; font-size: 0.9rem; border-left: 4px solid #a37452; color: #e8e2dc; }
         .highlight-text { color: #e09f8c; font-weight: bold; }
         .preview-box { background: #272524; padding: 6px 10px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; color: #d1c9bd; margin-top: 6px; border: 1px dashed #5c5450; word-break: break-all; }
@@ -76,8 +77,8 @@
                 <ul>
                     <li><strong>仕組み：</strong> セーブデータの更新を監視し、自動でコピーを作成します（古いものは勝手に整理され最新3つだけ保存）。</li>
                     <li><strong>自動終了：</strong> マイクラを終了して1時間経つと、自動で停止しポップアップでお知らせします（PCの負担になりません）。</li>
-                    <li><strong>使い方：</strong> 下のボタンでファイルを保存（通常は<strong>「ダウンロード」フォルダ</strong>に入ります）。ファイルをデスクトップに移動させ、マイクラを遊ぶ前にダブルクリックして起動！</li>
-                    <li><strong>削除方法とPCへの影響：</strong> 専用のソフトや常駐アプリではなく、ウィンドウを閉じれば完全に停止します。使わなくなったときは、<strong>作ったバッチファイル</strong>と<strong>バックアップフォルダ</strong>をそのままゴミ箱に捨てるだけで、PCにゴミを残さず綺麗に削除できます（PCへの悪影響はありません）。</li>
+                    <li><strong>使い方：</strong> 下のボタンでファイルを保存し、デスクトップに移動させてマイクラを遊ぶ前にダブルクリックで起動！</li>
+                    <li><strong>削除方法：</strong> ウィンドウを閉じれば完全に停止します。使わなくなったときはバッチファイルとバックアップフォルダをゴミ箱に捨てるだけで綺麗に削除できます。</li>
                 </ul>
             </div>
             <div style="text-align: right; margin-top: 15px;">
@@ -86,29 +87,53 @@
         </div>
     </div>
 
-    <div class="note-box">
-        💡 <strong>セーブフォルダの指定方法：</strong><br>
-        * <strong>通常版（公式ランチャー）の場合：</strong> ワールド名（例: <code>onono</code>）だけでもOKです。<br>
-        * <strong>CurseForge版の場合：</strong> CurseForgeの「3点リーダー(...)」→「フォルダを開く」から <code>saves\onono</code> フォルダを開き、アドレスバーのフルパスをそのまま①に貼り付けてください！
+    <div class="form-group">
+        <label>① マイクラの起動環境：</label>
+        <div class="radio-group">
+            <label class="radio-label">
+                <input type="radio" name="launcher" value="official" checked onchange="updateLauncherMode()"> 公式版Java
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="launcher" value="curseforge" onchange="updateLauncherMode()"> CurseForge
+            </label>
+        </div>
+    </div>
+
+    <!-- 公式版用の入力フィールド -->
+    <div id="officialField" class="form-group">
+        <label for="worldName">② ワールドのフォルダ名：</label>
+        <input type="text" id="worldName" value="ワールド名" oninput="generateScript()">
+        <small>※ 公式版の saves 内にあるワールド名を入力</small>
+    </div>
+
+    <!-- CurseForge用の入力フィールド -->
+    <div id="curseforgeFields" class="form-group" style="display: none;">
+        <div style="margin-bottom: 10px;">
+            <label for="instanceName">② CurseForgeのインスタンス名：</label>
+            <input type="text" id="instanceName" value="インスタンス名" oninput="generateScript()">
+            <small>※ CurseForgeアプリのアイコン下に表示されているプロファイル名</small>
+        </div>
+        <div>
+            <label for="worldNameCF">③ ワールドのフォルダ名：</label>
+            <input type="text" id="worldNameCF" value="ワールド名" oninput="generateScript()">
+            <small>※ saves 内にあるワールド名を入力</small>
+        </div>
     </div>
 
     <div class="form-group">
-        <label for="worldName">① ワールドのフォルダ名 または フルパス：</label>
-        <input type="text" id="worldName" value="onono" oninput="generateScript()">
-        <small>※ フォルダ名（例: <code>onono</code>）またはセーブフォルダのフルパスを入力</small>
-        <div class="preview-box">パス確認: <span id="pathPreview" style="color: #9cb8d9; font-weight: bold;"></span></div>
-    </div>
-
-    <div class="form-group">
-        <label for="dest">② 保存先のフォルダ場所：</label>
+        <label for="dest">保存先のフォルダ場所：</label>
         <input type="text" id="dest" value="%USERPROFILE%\Desktop\MinecraftBackup" oninput="generateScript()">
         <small>※ デスクトップに専用フォルダが自動作成されます</small>
     </div>
 
     <div class="form-group">
-        <label for="interval">③ バックアップの間隔（分）：</label>
+        <label for="interval">バックアップの間隔（分）：</label>
         <input type="number" id="interval" value="30" min="1" oninput="generateScript()">
         <small>※ 例: 30分おきなら 30 （※更新がないまま1時間で自動終了）</small>
+    </div>
+
+    <div class="preview-box" style="margin-bottom: 15px;">
+        監視するパス: <span id="pathPreview" style="color: #9cb8d9; font-weight: bold;"></span>
     </div>
 
     <div class="btn-container">
@@ -134,15 +159,35 @@
             }
         }
 
+        function updateLauncherMode() {
+            const isCurseForge = document.querySelector('input[name="launcher"]:checked').value === 'curseforge';
+            const cfFields = document.getElementById('curseforgeFields');
+            const officialField = document.getElementById('officialField');
+
+            if (isCurseForge) {
+                cfFields.style.display = 'block';
+                officialField.style.display = 'none';
+                document.getElementById('instanceName').value = 'インスタンス名';
+                document.getElementById('worldNameCF').value = 'ワールド名';
+            } else {
+                cfFields.style.display = 'none';
+                officialField.style.display = 'block';
+                document.getElementById('worldName').value = 'ワールド名';
+            }
+            generateScript();
+        }
+
         function generateScript() {
-            let inputVal = document.getElementById('worldName').value.trim();
+            const isCurseForge = document.querySelector('input[name="launcher"]:checked').value === 'curseforge';
             let source;
 
-            // フルパス（ドライブ名や環境変数、円マークを含む場合）はそのまま使用、そうでなければデフォルトのsavesパスに結合
-            if (inputVal.includes('\\') || inputVal.includes(':') || inputVal.startsWith('%')) {
-                source = inputVal;
+            if (isCurseForge) {
+                let instanceName = document.getElementById('instanceName').value.trim();
+                let worldNameCF = document.getElementById('worldNameCF').value.trim();
+                source = `%USERPROFILE%\\Documents\\CurseForge\\Minecraft\\Instances\\${instanceName}\\saves\\${worldNameCF}`;
             } else {
-                source = `%appdata%\\.minecraft\\saves\\${inputVal}`;
+                let worldName = document.getElementById('worldName').value.trim();
+                source = `%appdata%\\.minecraft\\saves\\${worldName}`;
             }
 
             let dest = document.getElementById('dest').value.trim();
@@ -262,7 +307,7 @@ pause`;
         }
 
         window.onload = function() {
-            generateScript();
+            updateLauncherMode();
         };
     </script>
 </body>
