@@ -42,8 +42,6 @@
         .radio-group { display: flex; gap: 20px; margin-top: 6px; margin-bottom: 12px; }
         .radio-label { font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #f0eae1; }
         
-        .note-box { background: #3d3936; padding: 10px 12px; border-radius: 6px; margin-bottom: 14px; font-size: 0.9rem; border-left: 4px solid #a37452; color: #e8e2dc; }
-        .highlight-text { color: #e09f8c; font-weight: bold; }
         .preview-box { background: #272524; padding: 6px 10px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; color: #d1c9bd; margin-top: 6px; border: 1px dashed #5c5450; word-break: break-all; }
         
         /* モーダル用スタイル */
@@ -53,12 +51,10 @@
         .modal-header h3 { margin: 0; color: #f5f0eb; font-size: 1.1rem; }
         .modal-body ul { padding-left: 20px; margin: 0; color: #d1c9bd; font-size: 0.88rem; line-height: 1.6; }
         .modal-body li { margin-bottom: 10px; }
-        code { background: #3d3936; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #e8e2dc; font-size: 0.85rem; }
     </style>
 </head>
 <body>
 
-    <!-- ヘルプボタン付きヘッダー -->
     <div class="header-container">
         <h1>マイクラ自動バックアップ作成ツール</h1>
         <button type="button" class="help-btn" onclick="openModal()">📖 使い方と仕組み</button>
@@ -66,7 +62,7 @@
     
     <p>最新3世代だけを自動で残す、安全な専用バックアップファイルを作ります。</p>
 
-    <!-- モーダルウィンドウ（ポップアップ） -->
+    <!-- モーダルウィンドウ -->
     <div id="helpModal" class="modal-overlay" onclick="outsideClose(event)">
         <div class="modal-content">
             <div class="modal-header">
@@ -77,9 +73,8 @@
                 <ul>
                     <li><strong>仕組み：</strong> セーブデータの更新を監視し、自動でコピーを作成します（古いものは勝手に整理され最新3つだけ保存）。</li>
                     <li><strong>自動終了：</strong> マイクラを終了して1時間経つと、自動で停止しポップアップでお知らせします（PCの負担になりません）。</li>
-                    <li><strong>使い方（重要）：</strong> デスクトップに配置し、マイクラを遊ぶ前にダブルクリックで起動します。<strong>ゲームを遊んでいる間（記録したい時間）は、この黒い画面のウィンドウを閉じずにそのまま開いたままにしておく必要があります</strong>（閉じるとバックアップが止まります）。</li>
-                    <li><strong>セキュリティ警告が出たら：</strong> 初めて開くときにWindowsの警告（「WindowsによってPCが保護されました」など）が出た場合は、<strong>「詳細情報」</strong>をクリックし、現れた<strong>「実行」</strong>ボタンを押して許可してください。</li>
-                    <li><strong>削除方法：</strong> ウィンドウを閉じれば完全に停止します。使わなくなったときはバッチファイルとバックアップフォルダをゴミ箱に捨てるだけで綺麗に削除できます。</li>
+                    <li><strong>使い方（重要）：</strong> デスクトップに配置し、マイクラを遊ぶ前にダブルクリックで起動します。<strong>ゲームを遊んでいる間は、この黒い画面のウィンドウを閉じずにそのまま開いたままにしておく必要があります</strong>。</li>
+                    <li><strong>セキュリティ警告が出たら：</strong> 初めて開くときに警告が出た場合は、<strong>「詳細情報」</strong>をクリックし、<strong>「実行」</strong>を押してください。</li>
                 </ul>
             </div>
             <div style="text-align: right; margin-top: 15px;">
@@ -100,24 +95,24 @@
         </div>
     </div>
 
-    <!-- 公式版用の入力フィールド -->
+    <!-- 公式版用 -->
     <div id="officialField" class="form-group">
         <label for="worldName">② ワールドのフォルダ名：</label>
         <input type="text" id="worldName" value="ワールド名" oninput="generateScript()">
         <small>※ 公式版の saves 内にあるワールド名を入力</small>
     </div>
 
-    <!-- CurseForge用の入力フィールド -->
+    <!-- CurseForge用 -->
     <div id="curseforgeFields" class="form-group" style="display: none;">
         <div style="margin-bottom: 10px;">
-            <label for="instanceName">② CurseForgeのインスタンス名：</label>
+            <label for="instanceName">② CurseForgeのインスタンス名（英語）：</label>
             <input type="text" id="instanceName" value="インスタンス名" oninput="generateScript()">
-            <small>※ CurseForgeアプリのアイコン下に表示されているプロファイル名</small>
+            <small>※ 例: CreateMod など</small>
         </div>
         <div>
             <label for="worldNameCF">③ ワールドのフォルダ名：</label>
             <input type="text" id="worldNameCF" value="ワールド名" oninput="generateScript()">
-            <small>※ saves 内にあるワールド名を入力</small>
+            <small>※ saves 内にあるワールド名（例: onono）を入力</small>
         </div>
     </div>
 
@@ -180,7 +175,7 @@
 
         function generateScript() {
             const isCurseForge = document.querySelector('input[name="launcher"]:checked').value === 'curseforge';
-            let source;
+            let source, displayPath;
 
             if (isCurseForge) {
                 let instanceName = document.getElementById('instanceName').value.trim();
