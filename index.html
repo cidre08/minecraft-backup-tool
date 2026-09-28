@@ -50,11 +50,11 @@
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5c5450; padding-bottom: 8px; margin-bottom: 12px; }
         .modal-header h3 { margin: 0; color: #f5f0eb; font-size: 1.1rem; }
         
-        /* モーダル内セクション整理用スタイル */
         .modal-body h4 { color: #f0eae1; margin: 14px 0 6px 0; font-size: 0.92rem; border-bottom: 1px solid #5c5450; padding-bottom: 3px; }
         .modal-body h4:first-child { margin-top: 0; }
         .modal-body ul { padding-left: 20px; margin: 0 0 10px 0; color: #d1c9bd; font-size: 0.85rem; line-height: 1.5; }
         .modal-body li { margin-bottom: 6px; }
+        .step-box { background: #3b3735; padding: 8px 10px; border-radius: 4px; margin-top: 4px; border-left: 3px solid #b87a56; }
     </style>
 </head>
 <body>
@@ -75,21 +75,18 @@
             </div>
             <div class="modal-body">
                 
-                <!-- 1. 使い方 -->
                 <h4>📌 1. 使い方</h4>
                 <ul>
-                    <li><strong>基本の手順：</strong> デスクトップに配置し、マイクラを遊ぶ前にダブルクリックで起動します。<strong>ゲームを遊んでいる間は、この黒い画面を閉じずにそのまま開いておく必要があります</strong>。</li>
-                    <li><strong>セキュリティ警告が出たら：</strong> ファイルを右クリックして<strong>「プロパティ」</strong>を開き、一番下にあるセキュリティの<strong>「許可する（またはブロックの解除）」</strong>にチェックを入れて「OK」を押すとスムーズに開けるようになります。</li>
+                    <li><strong>基本の手順：</strong> このツールで作成したバッチファイルをデスクトップ等に配置し、マイクラを遊ぶ前にダブルクリックで起動します。<strong>ゲームを遊んでいる間は、黒い画面を閉じずにそのまま開いておく必要があります</strong>。</li>
+                    <li><strong>セキュリティ警告が出たら：</strong> ファイルを右クリックして<strong>「プロパティ」</strong>を開き、一番下にあるセキュリティの<strong>「許可する（またはブロックの解除）」</strong>にチェックを入れて<strong>「OK」</strong>を押すとスムーズ,に開けるようになります。</li>
                 </ul>
 
-                <!-- 2. 仕組み -->
                 <h4>⚙️ 2. ツールの仕組み</h4>
                 <ul>
                     <li><strong>バックアップの動作：</strong> セーブデータの更新を検知し、自動で別フォルダにコピーを作成します（古いものは自動で整理され、最新3世代のみ保持されます）。</li>
                     <li><strong>自動終了機能：</strong> マイクラを終了して1時間以上セーブデータの更新がない場合、自動で監視を停止しポップアップでお知らせします（無駄な常駐を防ぎます）。</li>
                 </ul>
 
-                <!-- 3. 安全性・負荷・コンプライアンス -->
                 <h4>🛡️ 3. 安全性とPC・プログラムへの影響</h4>
                 <ul>
                     <li><strong>PCへの負荷：</strong> 指定した時間おきにファイルの更新日時を確認してコピーするだけの軽量な処理なため、CPUやメモリを圧迫せず、パソコンやゲームの動作に悪影響は与えません。</li>
@@ -97,7 +94,6 @@
                     <li><strong>プライバシー・通信：</strong> 外部へのデータ送信やインターネット通信は一切行わず、お使いのパソコン内（ローカル環境）だけで完結するため安心です。</li>
                 </ul>
 
-                <!-- 4. 免責事項 -->
                 <h4>⚠️ 4. 免責事項</h4>
                 <ul>
                     <li>本ツールは元データを上書き・改変しない安全設計ですが、万が一のデータ破損や消失等のトラブルが発生した場合に備え、ご自身の責任においてご利用ください。</li>
@@ -125,21 +121,25 @@
     <!-- 公式版用 -->
     <div id="officialField" class="form-group">
         <label for="worldName">② ワールドのフォルダ名：</label>
-        <input type="text" id="worldName" placeholder="ワールド名を入力" oninput="generateScript()">
+        <input type="text" id="worldName" placeholder="例: NewWorld" oninput="generateScript()">
         <small>※ 公式版の saves 内にあるワールド名を入力</small>
     </div>
 
     <!-- CurseForge用 -->
     <div id="curseforgeFields" class="form-group" style="display: none;">
-        <div style="margin-bottom: 10px;">
-            <label for="instanceName">② CurseForgeのインスタンス名（英語）：</label>
-            <input type="text" id="instanceName" placeholder="例: CreateMod" oninput="generateScript()">
-            <small>※ CurseForgeアプリのアイコン下に表示されているプロファイル名</small>
+        <div style="margin-bottom: 12px;">
+            <label for="instancePath">② インスタンスフォルダのパス（貼り付け）：</label>
+            <input type="text" id="instancePath" placeholder="例: C:\Users\YourName\curseforge\minecraft\Instances\YourInstance" oninput="generateScript()">
+            <div class="step-box">
+                <small style="color: #f0eae1;"><strong>💡 パスのコピー方法：</strong><br>
+                1. CurseForgeでModパックのアイコンを右クリック ＞ <strong>「フォルダを開く」</strong>をクリック<br>
+                2. 開いたウィンドウの<strong>アドレスバー</strong>を右クリック ＞ <strong>「アドレスをテキストとしてコピー」</strong>を選択して上の欄に貼り付け</small>
+            </div>
         </div>
         <div>
             <label for="worldNameCF">③ ワールドのフォルダ名：</label>
-            <input type="text" id="worldNameCF" placeholder="ワールド名を入力" oninput="generateScript()">
-            <small>※ saves 内にあるワールド名を入力</small>
+            <input type="text" id="worldNameCF" placeholder="例: MyWorld" oninput="generateScript()">
+            <small>※ saves 内にあるワールドのフォルダ名を入力</small>
         </div>
     </div>
 
@@ -202,9 +202,11 @@
             let source;
 
             if (isCurseForge) {
-                let instanceName = document.getElementById('instanceName').value.trim() || 'InstanceName';
+                let instPath = document.getElementById('instancePath').value.trim() || 'C:\\Path\\To\\Instance';
                 let worldNameCF = document.getElementById('worldNameCF').value.trim() || 'WorldName';
-                source = `%USERPROFILE%\\Documents\\CurseForge\\Minecraft\\Instances\\${instanceName}\\saves\\${worldNameCF}`;
+                
+                if (instPath.endsWith('\\')) instPath = instPath.slice(0, -1);
+                source = `${instPath}\\saves\\${worldNameCF}`;
             } else {
                 let worldName = document.getElementById('worldName').value.trim() || 'WorldName';
                 source = `%appdata%\\.minecraft\\saves\\${worldName}`;
@@ -276,7 +278,7 @@ if not exist "%DEST%" mkdir "%DEST%"
 for /f "usebackq" %%i in (\`powershell -Command "Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'"\`) do set "TIMESTAMP=%%i"
 
 mkdir "%DEST%\\%TIMESTAMP%"
-xcopy "%SOURCE%" "%DEST%\\%TIMESTAMP%\\" /E /I /H /Y
+powershell -Command "Copy-Item -Path '%SOURCE%\\*' -Destination '%DEST%\\%TIMESTAMP%' -Recurse -Force"
 
 powershell -Command "$backups = Get-ChildItem -Path '%DEST%' -Directory | Sort-Object CreationTime; if ($backups.Count -gt 3) { $backups[0..($backups.Count - 4)] | Remove-Item -Recurse -Force }"
 
