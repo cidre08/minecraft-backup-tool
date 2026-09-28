@@ -82,13 +82,13 @@
                 
                 <h4>📌 1. 使い方</h4>
                 <ul>
-                    <li><strong>基本の手順：</strong> マイクラを起動したあと（または起動と同時くらいに）、このツールで作成したバッチファイルをダブルクリックで起動します。<strong>マイクラを終了すると、このツールも自動的にパッと閉じます</strong>。</li>
+                    <li><strong>基本の手順：</strong> マイクラを始める前に、このツールで作成したバッチファイルを起動します（マイクラの起動を自動で待ち受けます）。<strong>あとからマイクラを起動すると自動でバックアップが始まり、ゲームを終了するとこのツールも自動的にパッと閉じます</strong>。</li>
                     <li><strong>セキュリティ警告が出たら：</strong> ファイルを右クリックして<strong>「プロパティ」</strong>を開き、一番下にあるセキュリティの<strong>「許可する（またはブロックの解除）」</strong>にチェックを入れて<strong>「OK」</strong>を押すとスムーズに開けるようになります。</li>
                 </ul>
 
                 <h4>⚙️ 2. ツールの仕組み</h4>
                 <ul>
-                    <li><strong>自動終了機能：</strong> マイクラの起動状態を常時監視し、ゲームを閉じると自動でバッチファイルが終了するため、閉じ忘れてバックアップし続ける心配がありません。</li>
+                    <li><strong>自動起動・終了機能：</strong> マイクラの起動状態を常時監視し、起動するまでは静かに待機し、ゲームを閉じると自動でバッチファイルが終了するため、閉じ忘れてバックアップし続ける心配がありません。</li>
                     <li><strong>バックアップの動作：</strong> 指定した時間おきに自動で別フォルダにコピーを作成します（古いものは自動で整理され、常に最新3世代のみ保持されます）。</li>
                 </ul>
 
@@ -252,10 +252,26 @@ set "INTERVAL=${interval}"
 set "WORLD_FOLDER=${worldFolderName}"
 :: ==========================================
 
-echo [INFO] マインクラフト連動型バックアップを開始します。
-echo 【設定】 %INTERVAL% 分ごとにバックアップ（マイクラ終了時に自動で閉じます）
+echo [INFO] マインクラフト連動型バックアップをスタンバイしました。
+echo 【設定】 %INTERVAL% 分ごとにバックアップ（最新3世代保持）
 echo 監視先: %SOURCE%
 echo.
+echo [INFO] マインクラフトの起動を待っています...
+echo （マイクラを起動すると、自動的にバックアップが開始されます）
+echo.
+
+:: マイクラが起動するまで待機するループ
+:WAIT_FOR_START
+tasklist /fi "imagename eq javaw.exe" 2>nul | find /i "javaw.exe" >nul
+if not errorlevel 1 goto START_BACKUP
+timeout /t 2 /nobreak >nul
+goto WAIT_FOR_START
+
+:START_BACKUP
+echo.
+echo [INFO] マインクラフトの起動を検出しました！
+echo 定期バックアップを開始します（ゲーム終了時に自動で閉じます）。
+timeout /t 2 /nobreak >nul
 
 :LOOP
 :: マイクラ（javaw.exe）が起動しているかチェック
