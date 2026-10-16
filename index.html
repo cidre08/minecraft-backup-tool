@@ -97,4 +97,412 @@
                 <ul>
                     <li><strong>情報を入力する：</strong> 起動環境やワールド名、保存先を決めて入力します。</li>
                     <li><strong>一括ダウンロード：</strong> 「必要なファイルをまとめて一括ダウンロード」ボタンを押し、出てきた <code>backup.bat</code> と <code>start_minecraft.vbs</code> の2つのファイルを<strong>必ず同じフォルダ</strong>に一緒に入れます。</li>
-                    <li><strong>セキュリティ警告が出たら：</strong> ファイルを右クリックして<strong>「プロパティ」</strong>を開き、一番下にある
+                    <li><strong>セキュリティ警告が出たら：</strong> ファイルを右クリックして<strong>「プロパティ」</strong>を開き、一番下にあるセキュリティの<strong>「許可する（またはブロックの解除）」</strong>にチェックを入れて<strong>「OK」</strong>を押すと開けるようになります。</li>
+                </ul>
+
+                <h4>🎨 2. デスクトップのアイコンを「マイクラの可愛いアイコン」に変える方法</h4>
+                <ul>
+                    <li>1. <code>start_minecraft.vbs</code> を右クリック ＞ <strong>「ショートカットの作成」</strong> をクリックします。</li>
+                    <li>2. 作成されたショートカットを右クリック ＞ <strong>「プロパティ」</strong> を開きます。</li>
+                    <li>3. <strong>「アイコンの変更...」</strong> ボタンを押し、マイクラの起動ファイル等を選択してお好みのアイコンに変更します。</li>
+                </ul>
+
+                <h4>⏱️ 3. すでに使っている backup.bat の「時間だけ」を変更したい場合</h4>
+                <ul>
+                    <li>1. 画面下部にある<strong>「⏱️ すでに使っている方の時間変更エリア」</strong>を使います。上の入力欄を触る必要はありません。</li>
+                    <li>2. 既存の <code>backup.bat</code> をドロップエリアにポンと投げ込むと、現在の時間が自動で読み込まれます。</li>
+                    <li>3. 変更後の時間を入力し、ボタンを押すだけで、他の設定はそのままに時間だけが変わった新しい <code>backup.bat</code> がダウンロードできます。それを古いものに上書きすれば完了です！</li>
+                </ul>
+
+                <h4>⚙️ 4. ツールの仕組みと同時起動について</h4>
+                <ul>
+                    <li><strong>マイクラと一緒に同時起動：</strong> 作成したファイルから起動すると、マイクラとバックアップが同時に動き始めます。</li>
+                    <li><strong>タスクバーで確認できる：</strong> 画面の邪魔にならないよう最小化状態で常駐するため、タスクバーを見ればバックアップが動いていることがいつでも確認できて安心です。マイクラを閉じれば自動で終了します。</li>
+                    <li><strong>自動世代管理：</strong> 指定した時間おきに自動で別フォルダへコピーを作成し、常に最新3世代のみ保持されます。</li>
+                </ul>
+
+                <h4>🛡️ 5. 安全性とPC・プログラムへの影響</h4>
+                <ul>
+                    <li><strong>PCへの負荷・影響：</strong> セーブデータフォルダを「読み取ってコピー」するだけで、ゲーム本体のプログラムを書き換えることは一切ないため安全です。通信も行いません。</li>
+                </ul>
+
+                <h4>🛟 6. 万が一クラッシュしたときの復旧手順</h4>
+                <details>
+                    <summary>クリックして復旧手順を表示する</summary>
+                    <ul>
+                        <li><strong>1. マイクラを完全に終了する：</strong> ゲームを閉じます。</li>
+                        <li><strong>2. 元データを安全な場所に退避させる：</strong> 壊れた元のワールドフォルダを別の場所へコピーして退避させます。</li>
+                        <li><strong>3. バックアップから取り出す：</strong> 保存先を開き、直前の時間のフォルダ内にあるワールド名フォルダを丸ごとコピーします。</li>
+                        <li><strong>4. saves フォルダに戻す：</strong> 元の <code>saves</code> フォルダに貼り付けて上書きします。</li>
+                        <li><strong>5. ゲームを起動する：</strong> マイクラを起動すれば復活します！</li>
+                    </ul>
+                </details>
+
+                <h4>⚠️ 7. 免責事項</h4>
+                <ul>
+                    <li>本ツールは安全設計ですが、万が一のデータ破損等のトラブルに備え、ご自身の責任においてご利用ください。</li>
+                </ul>
+
+            </div>
+            <div style="text-align: right; margin-top: 15px;">
+                <button type="button" onclick="closeModal()" style="background: #6b8268; padding: 6px 16px; font-size: 0.85rem; width: auto;">閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 通常の入力フォーム（初めての方用） -->
+    <div class="form-group">
+        <label>① マイクラの起動環境：</label>
+        <div class="radio-group">
+            <label class="radio-label">
+                <input type="radio" name="launcher" value="official" checked onchange="updateLauncherMode()"> 公式版Java
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="launcher" value="curseforge" onchange="updateLauncherMode()"> CurseForge
+            </label>
+        </div>
+    </div>
+
+    <!-- 公式版用 -->
+    <div id="officialField" class="form-group">
+        <label for="worldName">② ワールドのフォルダ名：</label>
+        <input type="text" id="worldName" placeholder="例: NewWorld" oninput="generateScript()">
+        <small>※ 公式版の saves 内にあるワールド名を入力</small>
+    </div>
+
+    <!-- CurseForge用 -->
+    <div id="curseforgeFields" class="form-group" style="display: none;">
+        <div style="margin-bottom: 12px;">
+            <label for="instancePath">② インスタンスフォルダのパス（貼り付け）：</label>
+            <input type="text" id="instancePath" placeholder="例: C:\Users\YourName\curseforge\minecraft\Instances\YourInstance" oninput="generateScript()">
+            <div class="step-box">
+                <small style="color: #f0eae1;"><strong>💡 パスのコピー方法：</strong><br>
+                1. CurseForgeでModパックのアイコンを右クリック ＞ <strong>「フォルダを開く」</strong>をクリック<br>
+                2. 開いたウィンドウの<strong>アドレスバー</strong>を右クリック ＞ <strong>「アドレスをテキストとしてコピー」</strong>を選択して上の欄に貼り付け</small>
+            </div>
+        </div>
+        <div>
+            <label for="worldNameCF">③ ワールドのフォルダ名：</label>
+            <input type="text" id="worldNameCF" placeholder="例: MyWorld" oninput="generateScript()">
+            <small>※ saves 内にあるワールドのフォルダ名を入力</small>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="dest">保存先のフォルダ場所：</label>
+        <input type="text" id="dest" value="%USERPROFILE%\Desktop\MinecraftBackup" oninput="generateScript()">
+        <small>※ デスクトップに専用フォルダが自動作成されます</small>
+    </div>
+
+    <div class="form-group">
+        <label for="interval">バックアップの間隔（分）：</label>
+        <input type="number" id="interval" value="30" min="1" oninput="generateScript()">
+        <small>※ 例: 30分おきなら 30</small>
+    </div>
+
+    <div class="preview-box" style="margin-bottom: 15px;">
+        監視するパス: <span id="pathPreview" style="color: #9cb8d9; font-weight: bold;"></span>
+    </div>
+
+    <!-- 初めての方用のメインダウンロードボタン -->
+    <div class="form-group" style="margin-top: 15px;">
+        <button class="btn-main" onclick="downloadBothFiles()">📦 必要なファイルをまとめて一括ダウンロード（初めての方はこちら！）</button>
+    </div>
+
+    <!-- 個別ファイルやコードを確認する項目（一括ダウンロードの下に配置） -->
+    <details style="margin-top: 15px; margin-bottom: 15px;">
+        <summary>🔧 個別ファイルやコードを確認・手動ダウンロード（上級者向け）</summary>
+        <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn-blue" onclick="downloadBackupBat()" style="flex: 1; padding: 8px;">backup.bat のみDL</button>
+            <button class="btn-blue" onclick="downloadLauncherVbs()" style="flex: 1; padding: 8px;">start_minecraft.vbs のみDL</button>
+            <button onclick="copyAll()" style="flex: 1; padding: 8px; background: #5c5450;">一括コピー</button>
+        </div>
+        
+        <div class="form-group" style="margin-top: 10px;">
+            <label for="outputBat">backup.bat の内容：</label>
+            <textarea id="outputBat" readonly></textarea>
+        </div>
+        <div class="form-group" style="margin-top: 5px;">
+            <label for="outputVbs">start_minecraft.vbs の内容：</label>
+            <textarea id="outputVbs" readonly></textarea>
+        </div>
+    </details>
+
+    <!-- 下部に独立させた「時間だけを変更したい場合」専用セクション -->
+    <div class="section-box">
+        <h3>⏱️ すでに使っている方：バックアップの間隔（時間）だけを変更したい場合</h3>
+        <p style="font-size: 0.88rem; color: #d1c9bd; margin-bottom: 8px;">
+            上の設定を触らなくても、今使っているファイルをここに置くだけで、設定をそのままに時間だけ変えたファイルが作れます！
+        </p>
+        
+        <!-- GitHub風ドロップエリア -->
+        <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+            <p>📂 今使っている <code>backup.bat</code> をここにポンとドラッグ＆ドロップ</p>
+            <small>（またはクリックしてファイルを選ぶと、中の設定が自動で読み込まれます）</small>
+            <input type="file" id="fileInput" accept=".bat" style="display: none;" onchange="handleFileSelect(event)">
+        </div>
+
+        <div id="loadedFileInfo" style="margin-top: 8px; font-size: 0.85rem; color: #9cb8d9; display: none;"></div>
+
+        <div class="form-group" style="margin-top: 12px; margin-bottom: 8px;">
+            <label for="newInterval" style="font-size: 0.9rem;">変更後のバックアップの間隔（分）：</label>
+            <input type="number" id="newInterval" value="30" min="1">
+        </div>
+
+        <button class="btn-orange" onclick="downloadModifiedBat()">🔄 時間だけを変更した backup.bat を作成してDL</button>
+    </div>
+
+    <script>
+        let loadedBatText = "";
+
+        function openModal() {
+            document.getElementById('helpModal').style.display = 'flex';
+        }
+        function closeModal() {
+            document.getElementById('helpModal').style.display = 'none';
+        }
+        function outsideClose(event) {
+            if (event.target === document.getElementById('helpModal')) {
+                closeModal();
+            }
+        }
+
+        function updateLauncherMode() {
+            const isCurseForge = document.querySelector('input[name="launcher"]:checked').value === 'curseforge';
+            const cfFields = document.getElementById('curseforgeFields');
+            const officialField = document.getElementById('officialField');
+
+            if (isCurseForge) {
+                cfFields.style.display = 'block';
+                officialField.style.display = 'none';
+            } else {
+                cfFields.style.display = 'none';
+                officialField.style.display = 'block';
+            }
+            generateScript();
+        }
+
+        // 既存の backup.bat のドラッグ＆ドロップ・ファイル選択処理
+        const dropZone = document.getElementById('dropZone');
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => { e.preventDefault(); dropZone.classList.add('dragover'); }, false);
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); }, false);
+        });
+        dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files.length > 0) parseBatFile(files[0]);
+        });
+
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            if (files.length > 0) parseBatFile(files[0]);
+        }
+
+        function parseBatFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                loadedBatText = e.target.result;
+                
+                // 既存ファイルのINTERVALを抽出して下部の入力欄にセット
+                const matchInterval = loadedBatText.match(/set\s+"INTERVAL=([^"]+)"/i) || loadedBatText.match(/set\s+INTERVAL=([^\r\n]+)/i);
+                if (matchInterval) {
+                    document.getElementById('newInterval').value = matchInterval[1].trim();
+                }
+
+                document.getElementById('loadedFileInfo').style.display = 'block';
+                document.getElementById('loadedFileInfo').textContent = `✅ 「${file.name}」を読み込みました！下の時間を変更してダウンロードしてください。`;
+            };
+            reader.readAsText(file, 'UTF-8');
+        }
+
+        // 下部エリア専用：読み込んだバッチの時間だけ書き換えてDLする関数
+        function downloadModifiedBat() {
+            if (!loadedBatText) {
+                alert('まずは上の枠に、今使っている backup.bat ファイルをドラッグ＆ドロップしてください！');
+                return;
+            }
+
+            const newInterval = document.getElementById('newInterval').value;
+            let modifiedText = loadedBatText;
+
+            // INTERVAL部分を新しい値に置換
+            if (/set\s+"INTERVAL=[^"]+"/.test(modifiedText)) {
+                modifiedText = modifiedText.replace(/set\s+"INTERVAL=[^"]+"/, `set "INTERVAL=${newInterval}"`);
+            } else if (/set\s+INTERVAL=/.test(modifiedText)) {
+                modifiedText = modifiedText.replace(/set\s+INTERVAL=.+/, `set "INTERVAL=${newInterval}"`);
+            }
+
+            modifiedText = modifiedText.replace(/\n/g, '\r\n');
+            const blob = new Blob([modifiedText], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'backup.bat';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function generateScript() {
+            const isCurseForge = document.querySelector('input[name="launcher"]:checked').value === 'curseforge';
+            let source, worldFolderName;
+
+            if (isCurseForge) {
+                let instPath = document.getElementById('instancePath').value.trim() || 'C:\\Path\\To\\Instance';
+                worldFolderName = document.getElementById('worldNameCF').value.trim() || 'WorldName';
+                
+                if (instPath.endsWith('\\')) instPath = instPath.slice(0, -1);
+                source = `${instPath}\\saves\\${worldFolderName}`;
+            } else {
+                worldFolderName = document.getElementById('worldName').value.trim() || 'WorldName';
+                source = `%appdata%\\.minecraft\\saves\\${worldFolderName}`;
+            }
+
+            let dest = document.getElementById('dest').value.trim();
+            const interval = document.getElementById('interval').value;
+
+            if (source.endsWith('\\')) source = source.slice(0, -1);
+            if (dest.endsWith('\\')) dest = dest.slice(0, -1);
+
+            document.getElementById('pathPreview').textContent = source;
+
+            // backup.bat のコード
+            const batScript = `@echo off
+chcp 65001 >nul
+color 07
+setlocal enabledelayedexpansion
+title Minecraft Backup
+
+set "INTERVAL=${interval}"
+set "SOURCE=${source}"
+set "DEST=${dest}"
+set "WORLD_FOLDER=${worldFolderName}"
+
+echo [INFO] Standby for Minecraft...
+echo [INFO] Target Path: %SOURCE%
+echo [INFO] Interval: %INTERVAL% minutes
+echo.
+echo [INFO] Waiting for Minecraft to start...
+
+:WAIT_LOOP
+tasklist /fi "imagename eq javaw.exe" 2>nul | find /i "javaw.exe" >nul
+if not errorlevel 1 goto START_RUN
+timeout /t 2 /nobreak >nul
+goto WAIT_LOOP
+
+:START_RUN
+echo.
+echo [INFO] Minecraft detected! Starting backup...
+timeout /t 2 /nobreak >nul
+
+:MAIN_LOOP
+tasklist /fi "imagename eq javaw.exe" 2>nul | find /i "javaw.exe" >nul
+if errorlevel 1 (
+    echo.
+    echo [INFO] Minecraft closed. Exiting...
+    timeout /t 3 /nobreak >nul
+    exit
+)
+
+cls
+echo [%DATE% %TIME%] Running backup...
+echo [INFO] Target Path: %SOURCE%
+echo [INFO] Interval: %INTERVAL% minutes (Auto-close when Minecraft exits)
+echo.
+
+if not exist "%DEST%" mkdir "%DEST%"
+
+for /f "usebackq" %%i in (\`powershell -Command "Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'"\`) do set "TIMESTAMP=%%i"
+
+set "TARGET_DIR=%DEST%\\%TIMESTAMP%\\%WORLD_FOLDER%"
+mkdir "%TARGET_DIR%" >nul 2>&1
+
+powershell -Command "Copy-Item -Path '%SOURCE%\\*' -Destination '%TARGET_DIR%' -Recurse -Force -ErrorAction SilentlyContinue"
+
+powershell -Command "$backups = Get-ChildItem -Path '%DEST%' -Directory | Sort-Object CreationTime; if ($backups.Count -gt 3) { $backups[0..($backups.Count - 4)] | Remove-Item -Recurse -Force }"
+
+echo Backup completed. (Keeping latest 3 generations)
+
+set /a "SEC=%INTERVAL% * 60"
+set /a "CHECK_COUNT=0"
+
+:CHECK_WAIT
+if !CHECK_COUNT! geq !SEC! goto MAIN_LOOP
+timeout /t 1 /nobreak >nul
+
+tasklist /fi "imagename eq javaw.exe" 2>nul | find /i "javaw.exe" >nul
+if errorlevel 1 (
+    echo.
+    echo [INFO] Minecraft closed. Exiting...
+    timeout /t 2 /nobreak >nul
+    exit
+)
+
+set /a "CHECK_COUNT+=1"
+goto CHECK_WAIT`;
+
+            document.getElementById('outputBat').value = batScript;
+
+            // 起動用 VBS のコード
+            const launcherPath = isCurseForge 
+                ? "C:\\Program Files\\CurseForge\\CurseForge.exe" 
+                : "C:\\Program Files (x86)\\Minecraft Launcher\\MinecraftLauncher.exe";
+
+            const vbsScript = `Set ws = CreateObject("Wscript.Shell")
+
+' 1. バックアップツールを最小化モード(7)で裏起動（タスクバーに表示されるので稼働中なのが一目で分かります）
+ws.Run "cmd /c backup.bat", 7, False
+
+' 2. マイクラのランチャーを通常起動
+ws.Run """${launcherPath}""", 1, False`;
+
+            document.getElementById('outputVbs').value = vbsScript;
+        }
+
+        function downloadBackupBat() {
+            generateScript();
+            let script = document.getElementById('outputBat').value;
+            script = script.replace(/\n/g, '\r\n');
+            const blob = new Blob([script], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'backup.bat';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadLauncherVbs() {
+            generateScript();
+            let script = document.getElementById('outputVbs').value;
+            script = script.replace(/\n/g, '\r\n');
+            const blob = new Blob([script], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'start_minecraft.vbs';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadBothFiles() {
+            downloadBackupBat();
+            setTimeout(downloadLauncherVbs, 400);
+        }
+
+        function copyAll() {
+            generateScript();
+            const text = "=== [backup.bat] ===\n" + document.getElementById('outputBat').value + "\n\n=== [start_minecraft.vbs] ===\n" + document.getElementById('outputVbs').value;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('両方のコードをコピーしました！');
+            });
+        }
+
+        window.onload = function() {
+            updateLauncherMode();
+        };
+    </script>
+</body>
+</html>
